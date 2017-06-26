@@ -1,5 +1,6 @@
 package com.example.nishant.savage;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,10 +34,11 @@ public class gamewindow extends View { //you have to create a new java file and 
     int c_x;
 
     Handler h;
-    int inc_y;
+    float x_point;
+    int radius=50;
 
-    public gamewindow(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public gamewindow(Context context, float x_point) {
+        super(context);
 
         paint.setAntiAlias(true);
         paint.setStrokeWidth(10f);
@@ -54,10 +57,9 @@ public class gamewindow extends View { //you have to create a new java file and 
         painto1.setStyle(Paint.Style.FILL);
         rm = new Random();
 
-        t = new Timer();
-         h = new Handler();
-
+        this.x_point=x_point;
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -66,48 +68,11 @@ public class gamewindow extends View { //you have to create a new java file and 
         canvas_width = canvas.getWidth();
         canvas_height = canvas.getHeight();
 
-        if (c_y <= 0) {
-            inc_y = 4;
-        }
-        if (c_y >= (canvas_height - 50)) {
-            inc_y = -4;
-        }
 
-
-
-        c_y = c_y + inc_y;
-
-        
-        Timer timer = new Timer(); // At this line a new Thread will be created
-        timer.scheduleAtFixedRate(new Draw_circle(canvas,c_x,c_y), 0,  1000); // delay
-        // in
-        // milliseconds
-    invalidate();
+        canvas.drawCircle(x_point,c_y+50,radius,painto);
 
 
     }
 
 
-    private class Draw_circle extends TimerTask {
-
-        Canvas canvas;
-        int x;
-        int y;
-
-        public Draw_circle(Canvas canvas, int c_x, int c_y) {
-
-            this.canvas=canvas;
-            x=c_x;
-            y=c_y;
-        }
-
-        @Override
-        public void run() {
-
-            canvas.drawCircle(c_x + 50, c_y + 50, 50, paintx);
-
-        }
-    }
 }
-
-
