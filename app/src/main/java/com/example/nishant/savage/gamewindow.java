@@ -2,10 +2,14 @@ package com.example.nishant.savage;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -31,14 +35,22 @@ public class gamewindow extends View { //you have to create a new java file and 
     Random rm;
     int canvas_width, canvas_height;
     int c_y;
-    int c_x;
 
-    Handler h;
-    float x_point;
+
+    float cartoon_x,cartoon_y;
+
+    float x_circle;
     int radius=50;
 
-    public gamewindow(Context context, float x_point) {
-        super(context);
+    Bitmap ball;
+    int ball_x,ball_y;
+
+
+
+    public gamewindow(Context runnable, float xPoint, float x, float y) {
+        super( runnable);
+        cartoon_x=x;
+        cartoon_y=y;
 
         paint.setAntiAlias(true);
         paint.setStrokeWidth(10f);
@@ -57,7 +69,7 @@ public class gamewindow extends View { //you have to create a new java file and 
         painto1.setStyle(Paint.Style.FILL);
         rm = new Random();
 
-        this.x_point=x_point;
+        x_circle=xPoint;
     }
 
 
@@ -68,8 +80,11 @@ public class gamewindow extends View { //you have to create a new java file and 
         canvas_width = canvas.getWidth();
         canvas_height = canvas.getHeight();
 
+        ball = BitmapFactory.decodeResource(getResources(),R.drawable.ball);
 
-        canvas.drawCircle(x_point,c_y+50,radius,painto);
+         Bitmap resized = Bitmap.createScaledBitmap(ball,(int)(ball.getWidth()*0.25), (int)(ball.getHeight()*0.25), true);
+
+        canvas.drawBitmap(resized,x_circle+50,c_y,null);
 
 
     }

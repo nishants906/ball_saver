@@ -12,7 +12,9 @@
         android:layout_height="50dp"
         android:src="@drawable/images"
         android:layout_alignParentBottom="true"
-        android:id="@+id/cartoon"/>
+        android:id="@+id/cartoon"
+        />
+
 
     <Button
         android:layout_width="50dp"
