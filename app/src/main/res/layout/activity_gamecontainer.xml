@@ -11,24 +11,15 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/images"
-        android:layout_alignParentBottom="true"
         android:id="@+id/cartoon"
-
         android:layout_marginLeft="50dp"
+        android:layout_above="@+id/lane"
         />
 
     <Button
-        android:layout_width="50dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/left"
         android:layout_alignParentBottom="true"
-        android:id="@+id/left"/>
-    <Button
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/right"
-        android:id="@+id/right"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:id="@+id/lane"/>
 
 </RelativeLayout>

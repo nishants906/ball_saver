@@ -41,7 +41,7 @@ import static android.R.attr.fillAfter;
 import static android.R.attr.fillEnabled;
 import static android.R.attr.value;
 
-public class gamecontainer extends AppCompatActivity implements View.OnClickListener {
+public class gamecontainer extends AppCompatActivity {
     gamewindow[] an = new gamewindow[11];
     RelativeLayout relativeLayout;
 
@@ -54,7 +54,7 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
     Rect Player;
     int x, y;
 
-    Button left, right;
+    Button lane;
     static ImageView cartoon;
 
     TranslateAnimation transAnimation;
@@ -76,12 +76,15 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
         rm = new Random();
 
 
+        cartoon = (ImageView) findViewById(R.id.cartoon);
+
+        ball = new ArrayList<Rect>();
+
+
         relativeLayout = (RelativeLayout) findViewById(R.id.n);
 
-        left = (Button) findViewById(R.id.left);
-        right = (Button) findViewById(R.id.right);
-
-        left.setOnTouchListener(new View.OnTouchListener() {
+        lane= (Button) findViewById(R.id.lane);
+        lane.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int x = (int) event.getRawX();
@@ -104,7 +107,7 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
                 cartoon.setTranslationX(cartoon.getTranslationX()-10);
 
             }
-        });*/
+        });
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,11 +116,7 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
                 cartoon.setTranslationX(cartoon.getTranslationX()+10);
 
             }
-        });
-        cartoon = (ImageView) findViewById(R.id.cartoon);
-
-        ball = new ArrayList<Rect>();
-
+        });*/
 
         (new Thread(new Runnable() {
             @Override
@@ -196,86 +195,7 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View v) {
 
-        switch (v.getId()) {
-
-            case R.id.left: {
-
-                ValueAnimator va = ValueAnimator.ofFloat(cartoon.getX(), (cartoon.getX() - 10));
-                int mDuration = 500; //in millis
-                va.setDuration(mDuration);
-                va.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        cartoon.setTranslationX(cartoon.getX());
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                });
-                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    public void onAnimationUpdate(ValueAnimator animation) {
-
-                        cartoon.setTranslationX((float) animation.getAnimatedValue());
-                    }
-                });
-                va.start();
-
-                break;
-
-            }
-            case R.id.right: {
-                ValueAnimator va = ValueAnimator.ofFloat(cartoon.getX(), cartoon.getX() + 10);
-                int mDuration = 500; //in millis
-                va.setDuration(mDuration);
-                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        cartoon.setTranslationX((float) animation.getAnimatedValue());
-                    }
-                });
-                va.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        cartoon.setTranslationX(cartoon.getX());
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                });
-                va.start();
-
-                break;
-            }
-
-
-        }
-    }
 
 
     public boolean CheckCollision(ImageView cartoon, gamewindow balls) {
