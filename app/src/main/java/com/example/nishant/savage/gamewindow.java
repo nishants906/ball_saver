@@ -7,9 +7,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -83,11 +85,13 @@ public class gamewindow extends View { //you have to create a new java file and 
         ball = BitmapFactory.decodeResource(getResources(),R.drawable.ball);
 
          Bitmap resized = Bitmap.createScaledBitmap(ball,(int)(ball.getWidth()*0.25), (int)(ball.getHeight()*0.25), true);
+        Log.d("canvasradius", String.valueOf(x_circle));
 
-        canvas.drawBitmap(resized,x_circle+50,c_y,null);
-
+        canvas.drawBitmap(resized,0,c_y,null);
 
     }
+
+
 
 
 }
