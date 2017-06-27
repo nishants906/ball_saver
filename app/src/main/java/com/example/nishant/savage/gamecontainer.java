@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Rect;
+import android.media.Image;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import java.util.TimerTask;
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.fillAfter;
 import static android.R.attr.fillEnabled;
+import static android.R.attr.fingerprintAuthDrawable;
 import static android.R.attr.value;
 
 public class gamecontainer extends AppCompatActivity {
@@ -50,8 +52,8 @@ public class gamecontainer extends AppCompatActivity {
     Random rm;
     float x_point;
 
-    ArrayList<Rect> ball;
-    Rect Player;
+
+
     int x, y;
 
     Button lane;
@@ -78,8 +80,6 @@ public class gamecontainer extends AppCompatActivity {
 
         cartoon = (ImageView) findViewById(R.id.cartoon);
 
-        ball = new ArrayList<Rect>();
-
 
         relativeLayout = (RelativeLayout) findViewById(R.id.n);
 
@@ -88,11 +88,11 @@ public class gamecontainer extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int x = (int) event.getRawX();
-                int y = (int) event.getRawY();
 
                 if(event.getAction()==MotionEvent.ACTION_MOVE)
                 {
                     cartoon.setTranslationX(x);
+
                     Log.d("changevalue1", String.valueOf(cartoon.getX()));
 
                 }
@@ -124,7 +124,7 @@ public class gamecontainer extends AppCompatActivity {
                 while (!Thread.interrupted())
                     try {
                         if (i < 10) {
-                            Thread.sleep(1000);
+                            Thread.sleep(2000);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -159,7 +159,7 @@ public class gamecontainer extends AppCompatActivity {
 
 
         ObjectAnimator translateXAnimation = ObjectAnimator.ofFloat(an, "translationX", 0f, 0f);
-        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, width - 100);
+        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, width - 350);
 
         AnimatorSet set = new AnimatorSet();
         set.setDuration(10000);
@@ -180,14 +180,18 @@ public class gamecontainer extends AppCompatActivity {
                 Log.d("positionsupdate", (x_point + "and" + y_pos));
                 Log.d("changevalueY", String.valueOf(cartoon.getX()));
 
-                if ((y_pos + 50f) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
+                if ((y_pos + 120f) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
                     Log.d("collide", String.valueOf(cartoon.getBottom()));
 
-                    if ((((x_point) < cartoon.getX()) && (x_point+50f > (cartoon.getX()))) || ((x_point > (cartoon.getX())) && (x_point < cartoon.getX()+50f))||(x_point>cartoon.getX())&&(x_point-50f<cartoon.getX()+50f))
+                    if ((((x_point) < cartoon.getX()) && (x_point+120f > (cartoon.getX()))) || ((x_point > (cartoon.getX())) && (x_point < cartoon.getX()+120f))||(x_point>cartoon.getX())&&(x_point-120f<cartoon.getX()+120f))
                         Log.d(("collisionoccur12 at "+ i), String.valueOf(animation.getAnimatedValue()));
 
 
                 }
+                if(y_pos==(width-350)){
+                    an.setVisibility(View.GONE);
+                }
+
             }
 
 
@@ -196,12 +200,4 @@ public class gamecontainer extends AppCompatActivity {
     }
 
 
-
-
-    public boolean CheckCollision(ImageView cartoon, gamewindow balls) {
-        Rect R1=new Rect(cartoon.getLeft(), cartoon.getTop(), cartoon.getRight(), cartoon.getBottom());
-        Rect R2=new Rect(balls.getLeft(), balls.getTop(), balls.getRight(), balls.getBottom());
-        return R1.intersect(R2);
-
-    }
 }
