@@ -87,7 +87,7 @@ public class gamewindow extends View { //you have to create a new java file and 
          Bitmap resized = Bitmap.createScaledBitmap(ball,(int)(ball.getWidth()*0.25), (int)(ball.getHeight()*0.25), true);
         Log.d("canvasradius", String.valueOf(x_circle));
 
-        canvas.drawBitmap(resized,0,c_y,null);
+        canvas.drawBitmap(resized,x_circle,c_y,null);
 
     }
 

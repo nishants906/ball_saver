@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,12 +55,12 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
     int x, y;
 
     Button left, right;
-    ImageView cartoon;
+    static ImageView cartoon;
 
     TranslateAnimation transAnimation;
 
-    int k = 0;
-    Boolean j=false;
+    static float x_pos;
+    static float y_pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +81,39 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
         left = (Button) findViewById(R.id.left);
         right = (Button) findViewById(R.id.right);
 
-        left.setOnClickListener(this);
-        right.setOnClickListener(this);
+        left.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) event.getRawX();
+                int y = (int) event.getRawY();
+
+                if(event.getAction()==MotionEvent.ACTION_MOVE)
+                {
+                    cartoon.setTranslationX(x);
+                    Log.d("changevalue1", String.valueOf(cartoon.getX()));
+
+                }
+                return true;
+            }
+        });
+     /*   left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Xposition", String.valueOf(cartoon.getX()));
+
+                cartoon.setTranslationX(cartoon.getTranslationX()-10);
+
+            }
+        });*/
+        right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Xposition", String.valueOf(cartoon.getX()));
+
+                cartoon.setTranslationX(cartoon.getTranslationX()+10);
+
+            }
+        });
         cartoon = (ImageView) findViewById(R.id.cartoon);
 
         ball = new ArrayList<Rect>();
@@ -102,16 +134,11 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
                                     y = (int) cartoon.getY();
                                     an[i] = new gamewindow(getApplicationContext(), x_point, x, y);
 
-                                    j = CheckCollision(cartoon, an[i]);
-
-
-                                    move(an[i], screenheight);
+                                    move(an[i], screenheight,x_point,i);
                                     relativeLayout.addView(an[i]);
 
                                     i++;
 
-
-                                    Log.d("valueto", String.valueOf(j));
 
 
                                     Log.d("valueof", String.valueOf(an[0].getY()));
@@ -129,18 +156,43 @@ public class gamecontainer extends AppCompatActivity implements View.OnClickList
         })).start();
     }
 
-    public static void move(final gamewindow an, float width) {
-        ValueAnimator va = ValueAnimator.ofFloat(0, width - 400);
-        int mDuration = 3000; //in millis
-        va.setDuration(mDuration);
-        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                an.setTranslationY((float) animation.getAnimatedValue());
-                Log.d("valuechange", String.valueOf(animation.getAnimatedValue()));
+    public static void move(final gamewindow an, final float width, final float x_point, final int i) {
 
+
+        ObjectAnimator translateXAnimation = ObjectAnimator.ofFloat(an, "translationX", 0f, 0f);
+        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, width - 100);
+
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(10000);
+        set.playTogether(translateXAnimation, translateYAnimation);
+        set.start();
+
+        translateXAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                x_pos = (Float) animation.getAnimatedValue();
             }
         });
-        va.start();
+
+        translateYAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                y_pos = (Float) animation.getAnimatedValue();
+                Log.d("positionsupdate", (x_point + "and" + y_pos));
+                Log.d("changevalueY", String.valueOf(cartoon.getX()));
+
+                if ((y_pos + 50f) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
+                    Log.d("collide", String.valueOf(cartoon.getBottom()));
+
+                    if ((((x_point) < cartoon.getX()) && (x_point+50f > (cartoon.getX()))) || ((x_point > (cartoon.getX())) && (x_point < cartoon.getX()+50f))||(x_point>cartoon.getX())&&(x_point-50f<cartoon.getX()+50f))
+                        Log.d(("collisionoccur12 at "+ i), String.valueOf(animation.getAnimatedValue()));
+
+
+                }
+            }
+
+
+        });
 
     }
 
