@@ -7,8 +7,10 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.media.Image;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -37,10 +40,12 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.R.attr.animateFirstView;
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.fillAfter;
 import static android.R.attr.fillEnabled;
 import static android.R.attr.fingerprintAuthDrawable;
+import static android.R.attr.finishOnCloseSystemDialogs;
 import static android.R.attr.value;
 
 public class gamecontainer extends AppCompatActivity {
@@ -52,11 +57,15 @@ public class gamecontainer extends AppCompatActivity {
     Random rm;
     float x_point;
 
+    int remove=0;                  //100dp = 250f    254 for cartoon
+
+    int width,height;
+
+    ImageView check;
 
 
-    int x, y;
 
-    Button lane;
+    Button lane, left, right;
     static ImageView cartoon;
 
     TranslateAnimation transAnimation;
@@ -77,20 +86,121 @@ public class gamecontainer extends AppCompatActivity {
 
         rm = new Random();
 
-
         cartoon = (ImageView) findViewById(R.id.cartoon);
 
+        cartoon.post(new Runnable() {
+            @Override
+            public void run() {
+                width = cartoon.getMeasuredWidth();
+                height = cartoon.getMeasuredHeight();
+
+                Log.d("cartoonwidth", String.valueOf(width));
+
+
+            }
+        });Log.d("cartoonwidth", String.valueOf(cartoon.getMeasuredWidth()));
+
+
+        check = (ImageView) findViewById(R.id.check);
 
         relativeLayout = (RelativeLayout) findViewById(R.id.n);
 
-        lane= (Button) findViewById(R.id.lane);
+        left = (Button) findViewById(R.id.left);
+        right = (Button) findViewById(R.id.right);
+
+
+
+        left.setOnTouchListener(new View.OnTouchListener() {
+
+            private Handler mHandler;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) event.getRawX();
+
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (mHandler != null) return true;
+                        mHandler = new Handler();
+                        mHandler.postDelayed(mAction, 50);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (mHandler == null) return true;
+                        mHandler.removeCallbacks(mAction);
+                        mHandler = null;
+                        break;
+                }
+                return false;
+
+            }
+
+            Runnable mAction = new Runnable() {
+                @Override
+                public void run() {
+
+
+                    cartoon.setTranslationX(cartoon.getTranslationX() - 30);
+
+
+                    mHandler.postDelayed(this, 50);
+                }
+            };
+
+
+            //        cartoon.setTranslationX(cartoon.getTranslationX() - 30);
+
+        });
+
+
+        right.setOnTouchListener(new View.OnTouchListener() {
+
+            private Handler mHandler;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (mHandler != null) return true;
+                        mHandler = new Handler();
+                        mHandler.postDelayed(mAction, 50);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (mHandler == null) return true;
+                        mHandler.removeCallbacks(mAction);
+                        mHandler = null;
+                        break;
+                }
+                return false;
+
+            }
+
+            Runnable mAction = new Runnable() {
+                @Override
+                public void run() {
+
+
+
+
+                    cartoon.setTranslationX(cartoon.getTranslationX() + 30);
+                    check.setTranslationX(cartoon.getTranslationX()-254);
+
+
+                    mHandler.postDelayed(this, 50);
+                }
+            };
+        });
+
+
+        lane = (Button) findViewById(R.id.lane);
         lane.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int x = (int) event.getRawX();
 
-                if(event.getAction()==MotionEvent.ACTION_MOVE)
-                {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     cartoon.setTranslationX(x);
 
                     Log.d("changevalue1", String.valueOf(cartoon.getX()));
@@ -99,6 +209,7 @@ public class gamecontainer extends AppCompatActivity {
                 return true;
             }
         });
+
      /*   left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,36 +229,39 @@ public class gamecontainer extends AppCompatActivity {
             }
         });*/
 
-        (new Thread(new Runnable() {
+
+
+       (new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted())
                     try {
                         if (i < 10) {
-                            Thread.sleep(2000);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    x_point = rm.nextInt((int) (screenwidth - 500));
-                                    x = (int) cartoon.getX();
-                                    y = (int) cartoon.getY();
-                                    an[i] = new gamewindow(getApplicationContext(), x_point, x, y);
 
-                                    move(an[i], screenheight,x_point,i);
-                                    relativeLayout.addView(an[i]);
+                                    if(remove==0) {
+                                        x_point = (rm.nextInt((int) (screenwidth - 664))+ 332);
+                                        an[i] = new gamewindow(getApplicationContext(), x_point);
+
+                                        move(an[i], screenheight, x_point, i);
+                                        relativeLayout.addView(an[i]);
+
+                                    }
+                                    else {
+                                     }
 
                                     i++;
 
-
-
-                                    Log.d("valueof", String.valueOf(an[0].getY()));
-
-
                                 }
                             });
+
                         } else {
                             Thread.interrupted();
                         }
+                        Thread.sleep(3000);
+
                     } catch (InterruptedException e) {
                         //error
                     }
@@ -155,13 +269,15 @@ public class gamecontainer extends AppCompatActivity {
         })).start();
     }
 
-    public static void move(final gamewindow an, final float width, final float x_point, final int i) {
+
+
+    public void move(final gamewindow an, final float screenwidth, final float x_point, final int i) {
 
 
         ObjectAnimator translateXAnimation = ObjectAnimator.ofFloat(an, "translationX", 0f, 0f);
-        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, width - 350);
+        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, screenwidth - 350);
 
-        AnimatorSet set = new AnimatorSet();
+        final AnimatorSet set = new AnimatorSet();
         set.setDuration(10000);
         set.playTogether(translateXAnimation, translateYAnimation);
         set.start();
@@ -175,16 +291,25 @@ public class gamecontainer extends AppCompatActivity {
 
         translateYAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(ValueAnimator animation) {                                //  height = y_pos + 250
                 y_pos = (Float) animation.getAnimatedValue();
-                Log.d("positionsupdate", (x_point + "and" + y_pos));
-                Log.d("changevalueY", String.valueOf(cartoon.getX()));
+                Log.d("changevalueY", String.valueOf(cartoon.getBottom()));
 
-                if ((y_pos + 120f) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
-                    Log.d("collide", String.valueOf(cartoon.getBottom()));
+                if ((y_pos + 250) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
+          //          Log.d(("collide"+ i), String.valueOf(cartoon.getBottom()));
 
-                    if ((((x_point) < cartoon.getX()) && (x_point+120f > (cartoon.getX()))) || ((x_point > (cartoon.getX())) && (x_point < cartoon.getX()+120f))||(x_point>cartoon.getX())&&(x_point-120f<cartoon.getX()+120f))
-                        Log.d(("collisionoccur12 at "+ i), String.valueOf(animation.getAnimatedValue()));
+
+                    if ((((x_point-60) < cartoon.getX()) ))
+                    {
+
+
+                        set.removeAllListeners();
+                        set.cancel();
+                        showAlert("You lose! Better luck next time!! ");
+
+                        remove=1;
+
+                    }
 
 
                 }
@@ -198,6 +323,27 @@ public class gamecontainer extends AppCompatActivity {
         });
 
     }
+    public void  showAlert(String str) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(gamecontainer.this);
+        builder.setMessage(str)
+                .setPositiveButton("AGAIN", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(gamecontainer.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        AlertDialog alert11 = builder.create();
+        if(!(gamecontainer.this).isFinishing())
+        {
 
+            alert11.show();
+        }
 
+    }
 }

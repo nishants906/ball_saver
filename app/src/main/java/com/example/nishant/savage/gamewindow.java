@@ -45,14 +45,12 @@ public class gamewindow extends View { //you have to create a new java file and 
     int radius=50;
 
     Bitmap ball;
-    int ball_x,ball_y;
 
 
 
-    public gamewindow(Context runnable, float xPoint, float x, float y) {
+    public gamewindow(Context runnable, float xPoint) {
         super( runnable);
-        cartoon_x=x;
-        cartoon_y=y;
+
 
         paint.setAntiAlias(true);
         paint.setStrokeWidth(10f);
@@ -82,10 +80,14 @@ public class gamewindow extends View { //you have to create a new java file and 
         canvas_width = canvas.getWidth();
         canvas_height = canvas.getHeight();
 
-        ball = BitmapFactory.decodeResource(getResources(),R.drawable.ball);
+        ball = BitmapFactory.decodeResource(getResources(),R.drawable.meteor);
 
-         Bitmap resized = Bitmap.createScaledBitmap(ball,(int)(ball.getWidth()*0.25), (int)(ball.getHeight()*0.25), true);
-        Log.d("canvasradius", String.valueOf(x_circle));
+
+
+         Bitmap resized = Bitmap.createScaledBitmap(ball,(int)(ball.getWidth()), (int)(ball.getHeight()), true);
+
+
+        Log.d("canvasradius", (String.valueOf(ball.getWidth())+" and "+ ball.getHeight()));
 
         canvas.drawBitmap(resized,x_circle,c_y,null);
 
