@@ -41,6 +41,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static android.R.attr.animateFirstView;
+import static android.R.attr.breadCrumbShortTitle;
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.fillAfter;
 import static android.R.attr.fillEnabled;
@@ -94,11 +95,13 @@ public class gamecontainer extends AppCompatActivity {
                 width = cartoon.getMeasuredWidth();
                 height = cartoon.getMeasuredHeight();
 
-                Log.d("cartoonwidth", String.valueOf(width));
+                Log.d("cartoonwidth", String.valueOf(height));
 
 
             }
-        });Log.d("cartoonwidth", String.valueOf(cartoon.getMeasuredWidth()));
+        });
+
+        Log.d("cartoonwidth", (String.valueOf(cartoon.getTop()+" , "+cartoon.getBottom())));
 
 
         check = (ImageView) findViewById(R.id.check);
@@ -140,7 +143,7 @@ public class gamecontainer extends AppCompatActivity {
                 public void run() {
 
 
-                    cartoon.setTranslationX(cartoon.getTranslationX() - 30);
+                    cartoon.setX(cartoon.getX() - 30);
 
 
                     mHandler.postDelayed(this, 50);
@@ -184,7 +187,7 @@ public class gamecontainer extends AppCompatActivity {
 
 
 
-                    cartoon.setTranslationX(cartoon.getTranslationX() + 30);
+                    cartoon.setX(cartoon.getX() + 30);
                     check.setTranslationX(cartoon.getTranslationX()-254);
 
 
@@ -234,6 +237,7 @@ public class gamecontainer extends AppCompatActivity {
        (new Thread(new Runnable() {
             @Override
             public void run() {
+                int level=1;
                 while (!Thread.interrupted())
                     try {
                         if (i < 10) {
@@ -242,7 +246,7 @@ public class gamecontainer extends AppCompatActivity {
                                 public void run() {
 
                                     if(remove==0) {
-                                        x_point = (rm.nextInt((int) (screenwidth - 664))+ 332);
+                                        x_point = (rm.nextInt((int) (screenwidth - 90))+ 40);
                                         an[i] = new gamewindow(getApplicationContext(), x_point);
 
                                         move(an[i], screenheight, x_point, i);
@@ -258,9 +262,24 @@ public class gamecontainer extends AppCompatActivity {
                             });
 
                         } else {
-                            Thread.interrupted();
+                  /*          final int finalLevel = level;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Toast.makeText(getApplicationContext(),("Level "+ finalLevel),Toast.LENGTH_SHORT).show();
+
+
+
+                                }
+                            });
+                            level++ ;
+*/
+                  Thread.interrupted();
+
+
                         }
-                        Thread.sleep(3000);
+                        Thread.sleep(3000/level);
 
                     } catch (InterruptedException e) {
                         //error
@@ -275,7 +294,7 @@ public class gamecontainer extends AppCompatActivity {
 
 
         ObjectAnimator translateXAnimation = ObjectAnimator.ofFloat(an, "translationX", 0f, 0f);
-        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, screenwidth - 350);
+        ObjectAnimator translateYAnimation = ObjectAnimator.ofFloat(an, "translationY", 0f, screenwidth );
 
         final AnimatorSet set = new AnimatorSet();
         set.setDuration(10000);
@@ -292,20 +311,23 @@ public class gamecontainer extends AppCompatActivity {
         translateYAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {                                //  height = y_pos + 250
+                                                                                             // 35    170
                 y_pos = (Float) animation.getAnimatedValue();
                 Log.d("changevalueY", String.valueOf(cartoon.getBottom()));
 
-                if ((y_pos + 250) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
+                if ((y_pos + 100) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
           //          Log.d(("collide"+ i), String.valueOf(cartoon.getBottom()));
 
 
-                    if ((((x_point-60) < cartoon.getX()) ))
-                    {
+                    if ( (((x_point-35) < cartoon.getX()) && (x_point+35 > (cartoon.getX()))) || ((x_point-35 > (cartoon.getX())) && (x_point+35 < cartoon.getX()+ 200))||(((x_point-35)<(cartoon.getX()+200)&&((x_point + 35)>(cartoon.getX()+200))))){
 
 
-                        set.removeAllListeners();
+                        Log.d("valuesare", (String.valueOf((x_point))+" and "+ String.valueOf(x_point-35)+" and "+ cartoon.getX()+" and "+ (cartoon.getX()+250)));
+
+
                         set.cancel();
                         showAlert("You lose! Better luck next time!! ");
+
 
                         remove=1;
 
@@ -313,8 +335,10 @@ public class gamecontainer extends AppCompatActivity {
 
 
                 }
-                if(y_pos==(width-350)){
-                    an.setVisibility(View.GONE);
+                if(y_pos > cartoon.getBottom()){
+
+                    relativeLayout.removeView(an);
+
                 }
 
             }
@@ -324,26 +348,36 @@ public class gamecontainer extends AppCompatActivity {
 
     }
     public void  showAlert(String str) {
+
+
+        CharSequence colors[] = new CharSequence[] {"Play Again", "High scrores","Cancel"};
         AlertDialog.Builder builder = new AlertDialog.Builder(gamecontainer.this);
-        builder.setMessage(str)
-                .setPositiveButton("AGAIN", new DialogInterface.OnClickListener() {
+
+        builder.setCancelable(false);
+
+        builder.setTitle(str)
+                .setItems(colors, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(gamecontainer.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        finish();
+                        switch ( id ){
+                            case 0:{
+                                startActivity(getIntent());
+                                break;
+                            }
+
+                            case 1:{
+                                Toast.makeText(getApplicationContext(),"hiscore",Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                            case 2:{
+                                finish();
+                                break;
+                            }
+                        }
                     }
                 });
         // Create the AlertDialog object and return it
         AlertDialog alert11 = builder.create();
-        if(!(gamecontainer.this).isFinishing())
-        {
-
-            alert11.show();
-        }
+        alert11.show();
 
     }
 }
