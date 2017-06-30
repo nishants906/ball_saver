@@ -54,11 +54,13 @@ public class gamecontainer extends AppCompatActivity {
     RelativeLayout relativeLayout;
 
     float screenwidth, screenheight;
-    private int i = 0;
+    private int i = 0, j=0;
     Random rm;
     float x_point;
 
     int remove=0;                  //100dp = 250f    254 for cartoon
+
+
 
     int width,height;
 
@@ -252,30 +254,19 @@ public class gamecontainer extends AppCompatActivity {
                                         move(an[i], screenheight, x_point, i);
                                         relativeLayout.addView(an[i]);
 
+                                        i++;
+                                        j++;
                                     }
-                                    else {
-                                     }
-
-                                    i++;
 
                                 }
                             });
 
                         } else {
-                  /*          final int finalLevel = level;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            Thread.sleep(3000);
+                            i=0;
+                            ++level;
+                            Log.d("levelup", String.valueOf(level) +" and "+ j);
 
-                                    Toast.makeText(getApplicationContext(),("Level "+ finalLevel),Toast.LENGTH_SHORT).show();
-
-
-
-                                }
-                            });
-                            level++ ;
-*/
-                  Thread.interrupted();
 
 
                         }
