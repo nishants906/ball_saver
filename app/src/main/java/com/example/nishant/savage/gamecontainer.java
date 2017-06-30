@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.drm.DrmStore;
 import android.graphics.Rect;
 import android.media.Image;
 import android.os.Build;
@@ -52,6 +53,8 @@ import static android.R.attr.value;
 public class gamecontainer extends AppCompatActivity {
     gamewindow[] an = new gamewindow[11];
     RelativeLayout relativeLayout;
+
+    MainActivity main;
 
     float screenwidth, screenheight;
     private int i = 0, j=0;
@@ -106,16 +109,36 @@ public class gamecontainer extends AppCompatActivity {
         Log.d("cartoonwidth", (String.valueOf(cartoon.getTop()+" , "+cartoon.getBottom())));
 
 
-        check = (ImageView) findViewById(R.id.check);
-
         relativeLayout = (RelativeLayout) findViewById(R.id.n);
 
         left = (Button) findViewById(R.id.left);
         right = (Button) findViewById(R.id.right);
+        lane = (Button) findViewById(R.id.lane);
+        left.setVisibility(View.VISIBLE);
+        right.setVisibility(View.VISIBLE);
+        lane.setVisibility(View.GONE);
 
 
 
-        left.setOnTouchListener(new View.OnTouchListener() {
+        Bundle bundle = getIntent().getExtras();
+        String message = bundle.getString("flag");
+
+        Log.d("message",message);
+        if(message.equals("button")){
+            left.setVisibility(View.VISIBLE);
+            right.setVisibility(View.VISIBLE);
+            lane.setVisibility(View.GONE);
+        }
+        else if(message.equals("lane")) {
+
+
+            left.setVisibility(View.GONE);
+            right.setVisibility(View.GONE);
+            lane.setVisibility(View.VISIBLE);
+
+        }
+
+            left.setOnTouchListener(new View.OnTouchListener() {
 
             private Handler mHandler;
 
@@ -144,10 +167,9 @@ public class gamecontainer extends AppCompatActivity {
                 @Override
                 public void run() {
 
-
-                    cartoon.setX(cartoon.getX() - 30);
-
-
+                    if((cartoon.getX()-30)>0) {
+                        cartoon.setX(cartoon.getX() - 30);
+                    }
                     mHandler.postDelayed(this, 50);
                 }
             };
@@ -189,17 +211,16 @@ public class gamecontainer extends AppCompatActivity {
 
 
 
-                    cartoon.setX(cartoon.getX() + 30);
-                    check.setTranslationX(cartoon.getTranslationX()-254);
+                    if((cartoon.getX()+30+230)<screenwidth) {
+                        cartoon.setX(cartoon.getX() + 30);
 
-
+                    }
                     mHandler.postDelayed(this, 50);
                 }
             };
         });
 
 
-        lane = (Button) findViewById(R.id.lane);
         lane.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -265,8 +286,16 @@ public class gamecontainer extends AppCompatActivity {
                             Thread.sleep(3000);
                             i=0;
                             ++level;
+
+
                             Log.d("levelup", String.valueOf(level) +" and "+ j);
 
+                            final int finalLevel = level;
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),("LEVEL " + finalLevel),Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
 
                         }
@@ -305,8 +334,12 @@ public class gamecontainer extends AppCompatActivity {
                                                                                              // 35    170
                 y_pos = (Float) animation.getAnimatedValue();
                 Log.d("changevalueY", String.valueOf(cartoon.getBottom()));
+                Log.d("changeX", String.valueOf(y_pos));
+                Log.d("changevalueZ", String.valueOf(cartoon.getTop()));
 
-                if ((y_pos + 100) >= cartoon.getTop() && (y_pos <= cartoon.getBottom())) {
+
+
+                if (((y_pos + 160) >= 1170) && (y_pos+160 <= 1425)) {
           //          Log.d(("collide"+ i), String.valueOf(cartoon.getBottom()));
 
 
@@ -326,7 +359,7 @@ public class gamecontainer extends AppCompatActivity {
 
 
                 }
-                if(y_pos > cartoon.getBottom()){
+                else if(y_pos +170 > 1425){
 
                     relativeLayout.removeView(an);
 
@@ -368,7 +401,9 @@ public class gamecontainer extends AppCompatActivity {
                 });
         // Create the AlertDialog object and return it
         AlertDialog alert11 = builder.create();
-        alert11.show();
-
+        if(!(gamecontainer.this).isFinishing())
+               {
+                    alert11.show();
+               }
     }
 }
